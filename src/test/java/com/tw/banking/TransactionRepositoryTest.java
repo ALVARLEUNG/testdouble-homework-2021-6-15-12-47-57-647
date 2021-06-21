@@ -4,6 +4,9 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import java.lang.reflect.Array;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,28 +54,26 @@ class TransactionRepositoryTest {
         Clock clock = mock(Clock.class);
         TransactionRepository transactionRepository = new TransactionRepository(clock);
         int amount = 100;
+        transactionRepository.transactions = Collections.singletonList(new Transaction("date", amount));
 
         // when
-        when(clock.todayAsString()).thenReturn("2021/06/21");
-        transactionRepository.addWithdraw(amount);
         List<Transaction> transactions =  transactionRepository.allTransactions();
 
         // then
         Assertions.assertEquals(1, transactions.size());
-        Assertions.assertEquals("2021/06/21", transactions.get(0).date());
-        Assertions.assertEquals(-100, transactions.get(0).amount());
+        Assertions.assertEquals("date", transactions.get(0).date());
+        Assertions.assertEquals(100, transactions.get(0).amount());
     }
 
     @Test
     void should_allTransactions_throw_exception() {
         // given
+        int amount = 100;
         Clock clock = mock(Clock.class);
         TransactionRepository transactionRepository = new TransactionRepository(clock);
-        int amount = 100;
+        transactionRepository.transactions = Collections.singletonList(new Transaction("date", 100));
 
         // when
-        when(clock.todayAsString()).thenReturn("2021/06/21");
-        transactionRepository.addWithdraw(amount);
         List<Transaction> transactions =  transactionRepository.allTransactions();
 
         // then
